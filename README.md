@@ -49,12 +49,13 @@ PASSED
 Running TEST 5: 200000 - 205000
 PASSED
 
-Running TEST 6 with time: 1000 - 10000000
-344.25user 0.58system 5:38.48elapsed 101%CPU (0avgtext+0avgdata 50640maxresident)k
-0inputs+0outputs (0major+13642minor)pagefaults 0swaps
+Running TEST 6 with time: 1000 - 1000000
+821.94user 1.65system 1:58.78elapsed 693%CPU (0avgtext+0avgdata 50368maxresident)k
+0inputs+0outputs (0major+24777minor)pagefaults 0swaps
 PASSED
 
 PASSED 6/6 tests
+
 ```
 
 # Test cases
