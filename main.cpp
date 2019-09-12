@@ -108,7 +108,7 @@ std::array<bool, 3> checkResult(const string& cmd)
     if (!vampireNum.empty()) // not enough vampire number
         errCheck[0] = true;
 
-    if (!vampire.empty()) // some vampire numbers are missing fangs
+    if (vampire.size() > vampireNum.size()) // some vampire numbers are missing fangs
         errCheck[1] = true;
 
     return errCheck;
@@ -149,9 +149,9 @@ bool grade(const char* dbFile, const string& cmd)
     {
         cout << RED << "FAILED" << RESET << "\n";
         if (err[0])
-            cout << "- Incorrect vampire numbers.\n";
+            cout << "- Incorrect or missing vampire numbers.\n";
         if (err[1])
-            cout << "- Incorrect fangs.\n";
+            cout << "- The reported numbers have incorrect or missing fangs.\n";
         if (err[2])
             cout << "- Not printing all fangs on a single line.\n";
     }
@@ -165,6 +165,10 @@ int main(int argc, char **argv)
     cout << "\n===== Grading program for Project 1 ===== \n\n";
 
     string mixCmd = "mix run proj1.exs";
+    if (argc > 2)
+        if (strcmp(argv[2], "--no-halt") == 0)
+            mixCmd = "mix run --no-halt proj1.exs";
+
     string cd = "cd " + string(argv[1]);
 
     cout << "Compiling ...\n";
