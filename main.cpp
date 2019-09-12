@@ -49,17 +49,23 @@ vector<ulong> tokenizeNumber(const string& s)
  * @param cmd command to run the program
  * @return true if output is correct
  */
-bool checkResult(const string& cmd)
+std::array<bool, 3> checkResult(const string& cmd)
 {
+    std::array<bool, 3> errCheck{false, false, false};
+    unordered_set<ulong> vampireNum; /// Set of vampire numbers
+
+    // Keep a list of all vampire number
+    for (const auto& i : vampire)
+    {
+        vampireNum.insert(i.first);
+    }
+
     std::array<char, 1000> buffer{};
 
     // Run program
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
 
-    if (!pipe)
-    {
-        throw std::runtime_error("popen() failed!");
-    }
+    if (!pipe) throw std::runtime_error("popen() failed!");
 
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) // get each line of the output
     {
@@ -69,6 +75,13 @@ bool checkResult(const string& cmd)
 
         if (vampire.find(res[0]) != vampire.end())
         {
+            if (vampireNum.erase(res[0]) == 0)
+            {
+                // res[0] is not existed in this set, that means it has been erased before, this is a duplicate
+                // Thus, this is not single line printing
+                errCheck[2] = true;
+            }
+
             // The is a vampire number, now check the fang
             auto& fang = vampire[res[0]];
             for (ulong i = 1; i < res.size(); ++i)
@@ -77,16 +90,28 @@ bool checkResult(const string& cmd)
                 {
                     fang.erase(res[i]);
                 }
-                else return false;
+                else
+                {
+                    errCheck[1] = true; // incorrect fang
+                }
             }
 
             if (fang.empty())
                 vampire.erase(res[0]);
         }
-        else return false;
+        else
+        {
+            errCheck[0] = true; // wrong vampire number
+        }
     }
 
-    return vampire.empty();
+    if (!vampireNum.empty()) // not enough vampire number
+        errCheck[0] = true;
+
+    if (vampire.size() > vampireNum.size()) // some vampire numbers are missing fangs
+        errCheck[1] = true;
+
+    return errCheck;
 }
 
 void mixCompile(const string& cmd)
@@ -114,14 +139,25 @@ bool grade(const char* dbFile, const string& cmd)
 
     vampire = j.get<unordered_map<ulong, unordered_set<ulong>>>();
 
-    bool result = checkResult(cmd);
+    const auto& err = checkResult(cmd);
 
-    if (result)
+    bool isErr = err[0] || err[1] || err[2];
+
+    if (!isErr)
         cout << GREEN << "PASSED" << RESET << "\n";
     else
+    {
         cout << RED << "FAILED" << RESET << "\n";
+        if (err[0])
+            cout << "- Incorrect vampire numbers.\n";
+        if (err[1])
+            cout << "- Incorrect fangs.\n";
+        if (err[2])
+            cout << "- Not printing all fangs on a single line.\n";
+    }
 
-    return result;
+
+    return isErr;
 }
 
 int main(int argc, char **argv)
