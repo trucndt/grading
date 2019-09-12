@@ -8,6 +8,7 @@ Require CMake >= 10.0
 $ mkdir build
 $ cd build
 $ cmake ..
+$ make
 ```
 
 # Execution
