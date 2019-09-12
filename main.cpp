@@ -157,7 +157,7 @@ bool grade(const char* dbFile, const string& cmd)
     }
 
 
-    return isErr;
+    return !isErr;
 }
 
 int main(int argc, char **argv)
