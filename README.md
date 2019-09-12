@@ -84,6 +84,7 @@ PASSED
 Running TEST 3: 500000 - 1000000
 FAILED
 - Incorrect or missing vampire numbers.
+- The reported numbers have incorrect or missing fangs.
 
 Running TEST 4: 100000 - 105000
 PASSED
