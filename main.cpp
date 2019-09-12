@@ -108,7 +108,7 @@ std::array<bool, 3> checkResult(const string& cmd)
     if (!vampireNum.empty()) // not enough vampire number
         errCheck[0] = true;
 
-    if (vampire.size() > vampireNum.size()) // some vampire numbers are missing fangs
+    if (!vampire.empty()) // some vampire numbers are missing fangs
         errCheck[1] = true;
 
     return errCheck;
